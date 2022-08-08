@@ -3,6 +3,7 @@ import { Alert, AlertVariant, FlexItem, Form } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 
 import ArmCheckbox from './ArmCheckbox';
+import MultiarchCheckbox from './MultiarchCheckbox';
 import { HostsNetworkConfigurationControlGroup } from './HostsNetworkConfigurationControlGroup';
 import {
   CheckboxField,
@@ -126,6 +127,7 @@ export const OcmClusterDetailsFormFields: React.FC<ClusterDetailsFormFieldsProps
 
       {canEditPullSecret && <PullSecret isOcm={isOcm} defaultPullSecret={defaultPullSecret} />}
       <ArmCheckbox versions={versions} />
+      <MultiarchCheckbox versions={versions} />
       <HostsNetworkConfigurationControlGroup clusterExists={clusterExists} />
       <DiskEncryptionControlGroup
         values={values}

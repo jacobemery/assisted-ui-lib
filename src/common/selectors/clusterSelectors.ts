@@ -100,6 +100,9 @@ export const selectIpv6HostPrefix = ({ clusterNetworks }: Pick<Cluster, 'cluster
 export const isArmArchitecture = ({ cpuArchitecture }: Pick<Cluster, 'cpuArchitecture'>) =>
   cpuArchitecture === CpuArchitecture.ARM;
 
+export const isMultiArchitecture = ({ cpuArchitecture }: Pick<Cluster, 'cpuArchitecture'>) =>
+  cpuArchitecture === CpuArchitecture.multiarch;
+  
 const getOldSchedulableMastersAlwaysOn = (cluster: Cluster) => {
   return cluster.hosts ? cluster.hosts.length < 5 : true;
 };

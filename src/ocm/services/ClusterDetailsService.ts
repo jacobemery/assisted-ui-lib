@@ -12,7 +12,7 @@ import { ClustersAPI, ManagedDomainsAPI } from '../services/apis';
 import InfraEnvsService from './InfraEnvsService';
 import omit from 'lodash/omit';
 import DiskEncryptionService from './DiskEncryptionService';
-import { isArmArchitecture, isSNO } from '../../common/selectors/clusterSelectors';
+import { isArmArchitecture, isSNO, isMultiArchitecture } from '../../common/selectors/clusterSelectors';
 import { CreateParams, HostsNetworkConfigurationType, OcmClusterDetailsValues } from './types';
 import { getDummyInfraEnvField } from '../components/clusterConfiguration/staticIp/data/dummyData';
 
@@ -58,6 +58,10 @@ const ClusterDetailsService = {
     if (isArmArchitecture({ cpuArchitecture: params.cpuArchitecture })) {
       params.userManagedNetworking = true;
     }
+    params.diskEncryption = DiskEncryptionService.getDiskEncryptionParams(values);
+    if (isMultiArchitecture({ cpuArchitecture: params.cpuArchitecture })) {
+      params.userManagedNetworking = true;
+    }
     params.networkType = getDefaultNetworkType(isSNOCluster);
     if (values.hostsNetworkConfigurationType === HostsNetworkConfigurationType.STATIC) {
       params.staticNetworkConfig = getDummyInfraEnvField();
@@ -84,8 +88,9 @@ const ClusterDetailsService = {
     });
     const params = new URLSearchParams(urlSearchParams);
     const hasArmSearchParam = params.get('useArm') === 'true';
+    const hasMultiSearchParam = params.get('useMultiarch') === 'true';
     const cpuArchitecture =
-      cluster?.cpuArchitecture || (hasArmSearchParam ? CpuArchitecture.ARM : CpuArchitecture.x86);
+      cluster?.cpuArchitecture || (hasArmSearchParam ? CpuArchitecture.ARM : CpuArchitecture.x86) || (hasMultiSearchParam ? CpuArchitecture.multiarch : CpuArchitecture.x86);
     const hostsNetworkConfigurationType = infraEnv?.staticNetworkConfig
       ? HostsNetworkConfigurationType.STATIC
       : HostsNetworkConfigurationType.DHCP;

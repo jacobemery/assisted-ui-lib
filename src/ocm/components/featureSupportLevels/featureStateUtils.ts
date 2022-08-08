@@ -5,11 +5,15 @@ import {
   SupportLevel,
 } from '../../../common/types';
 import { Cluster } from '../../../common/api/types';
-import { isArmArchitecture, isSNO } from '../../../common/selectors/clusterSelectors';
+import { isArmArchitecture, isSNO, isMultiArchitecture } from '../../../common/selectors/clusterSelectors';
 
 const isArmSupported = (versionName: string, versionOptions: OpenshiftVersionOptionType[]) => {
   const versionOption = versionOptions.find((option) => option.value === versionName);
   return !!versionOption?.cpuArchitectures?.includes(CpuArchitecture.ARM);
+};
+const isMultiSupported = (versionName: string, versionOptions: OpenshiftVersionOptionType[]) => {
+  const versionOption = versionOptions.find((option) => option.value === versionName);
+  return !!versionOption?.cpuArchitectures?.includes(CpuArchitecture.multiarch);
 };
 const clusterExistsReason = 'This option is not editable after the draft cluster is created';
 
@@ -33,6 +37,20 @@ const getArmDisabledReason = (
   }
   if (!isArmSupported(versionName, versionOptions)) {
     return 'arm64 is not supported in this OpenShift version';
+  }
+  return undefined;
+};
+
+const getMultiDisabledReason = (
+  cluster: Cluster | undefined,
+  versionName: string,
+  versionOptions: OpenshiftVersionOptionType[],
+) => {
+  if (cluster) {
+    return clusterExistsReason;
+  }
+  if (!isMultiSupported(versionName, versionOptions)) {
+    return 'multiarch is not supported in this OpenShift version';
   }
   return undefined;
 };
@@ -90,6 +108,9 @@ export const getFeatureDisabledReason = (
     case 'ARM64_ARCHITECTURE': {
       return getArmDisabledReason(cluster, versionName, versionOptions);
     }
+    case 'MULTIARCH': {
+      return getMultiDisabledReason(cluster, versionName, versionOptions);
+    }
     case 'CNV': {
       return getCnvDisabledReason(cluster);
     }
@@ -116,6 +137,9 @@ export const isFeatureSupported = (
 ) => {
   if (featureId === 'ARM64_ARCHITECTURE') {
     return isArmSupported(versionName, versionOptions);
+  }
+  if (featureId === 'MULTIARCH') {
+    return isMultiSupported(versionName, versionOptions);
   } else {
     return supportLevel !== 'unsupported';
   }

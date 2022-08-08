@@ -54,4 +54,5 @@ export type StorageValues = V2ClusterUpdateParams & {
 export enum CpuArchitecture {
   x86 = 'x86_64',
   ARM = 'arm64',
+  multiarch = 'multiarch'
 }
