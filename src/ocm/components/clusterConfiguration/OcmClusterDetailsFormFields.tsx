@@ -3,6 +3,7 @@ import { Form } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 
 import ArmCheckbox from './ArmCheckbox';
+import MultiarchCheckbox from './MultiarchCheckbox';
 import { HostsNetworkConfigurationControlGroup } from './HostsNetworkConfigurationControlGroup';
 import {
   ClusterDetailsValues,
@@ -122,6 +123,7 @@ export const OcmClusterDetailsFormFields = ({
 
       {!isPullSecretSet && <PullSecret isOcm={isOcm} defaultPullSecret={defaultPullSecret} />}
       <ArmCheckbox versions={versions} />
+      <MultiarchCheckbox versions={versions} />
       <HostsNetworkConfigurationControlGroup clusterExists={clusterExists} />
       <DiskEncryptionControlGroup
         values={values}

@@ -8,6 +8,7 @@ import {
   OpenshiftVersionOptionType,
   getClusterDetailsInitialValues,
   isArmArchitecture,
+  isMultiArchitecture,
 } from '../../common';
 import { ClustersAPI, ManagedDomainsAPI } from '../services/apis';
 import InfraEnvsService from './InfraEnvsService';
@@ -63,6 +64,10 @@ const ClusterDetailsService = {
     if (isArmArchitecture({ cpuArchitecture: params.cpuArchitecture })) {
       params.userManagedNetworking = true;
     }
+    params.diskEncryption = DiskEncryptionService.getDiskEncryptionParams(values);
+    if (isMultiArchitecture({ cpuArchitecture: params.cpuArchitecture })) {
+      params.userManagedNetworking = true;
+    }
     if (values.hostsNetworkConfigurationType === HostsNetworkConfigurationType.STATIC) {
       params.staticNetworkConfig = getDummyInfraEnvField();
     }
@@ -91,8 +96,9 @@ const ClusterDetailsService = {
     });
     const params = new URLSearchParams(urlSearchParams);
     const hasArmSearchParam = params.get('useArm') === 'true';
+    const hasMultiSearchParam = params.get('useMultiarch') === 'true';
     const cpuArchitecture =
-      cluster?.cpuArchitecture || (hasArmSearchParam ? CpuArchitecture.ARM : CpuArchitecture.x86);
+    cluster?.cpuArchitecture || (hasArmSearchParam ? CpuArchitecture.ARM : CpuArchitecture.x86) || (hasMultiSearchParam ? CpuArchitecture.multiarch : CpuArchitecture.x86);
     const hostsNetworkConfigurationType = infraEnv?.staticNetworkConfig
       ? HostsNetworkConfigurationType.STATIC
       : HostsNetworkConfigurationType.DHCP;

@@ -26,6 +26,8 @@ const getFeatureReviewText = (featureId: FeatureId): string => {
       return 'Allocate IPs via DHCP server';
     case 'ARM64_ARCHITECTURE':
       return 'Use ARM architecture for the cluster';
+    case 'MULTIARCH_RELEASE_IMAGE':
+      return 'Use multiarch images for the cluster (ppc64le, s390x or ARM64)';
     default:
       return featureId;
   }
